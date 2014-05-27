@@ -27,7 +27,7 @@ namespace Sigeret.Controllers
             catch (Exception e)
             {
 
-                return RedirectToAction("ExeptionError","CustomErrorController", e.InnerException);
+                return RedirectToAction("ExeptionError","CustomErrorController", e);
             }
         }
 
