@@ -1,0 +1,160 @@
+﻿@model IEnumerable<Sigeret.Models.Contacto>
+
+@{
+    ViewBag.Title = "Mis Contactos";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <hgroup class="title">
+            <h2>Mis Contactos</h2>
+        </hgroup>
+        <div class="well">
+            @Html.Hidden("updateTableContactos", Url.Action("DatosContactos", "Contacto"))
+            @Html.Hidden("contactosModalAdd", Url.Action("AgregarContactoModal", "Contacto"))
+            <fieldset>
+                <legend>Agenda de contactos</legend>
+                <div class="form-group col-lg-12">
+                    <p class="">
+                        @Html.ActionLink("Nuevo", "NuevoContacto", null, new { @class = "btn btn-primary  fr mb10 newContact" })
+                    </p>
+                </div>
+                <div id="misContactos" class="form-group scroll form_table misContactos col-lg-12 pl0">
+                    @Html.Partial("PartialContactosTable", Model)
+                </div>
+            </fieldset>
+
+            <div class="modalForm">
+            </div>
+
+            <div class="modalContactAdd">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            function fnUpdateContacts() {
+                $.get(
+                    $('#updateTableContactos').val(),
+                    function (data) {
+                        $('.misContactos').html(data);
+                    }
+                );
+            }
+            $.get(
+                $('#contactosModalAdd').val(),
+                function (data) {
+                    $('.modalContactAdd').html(data);
+                    fnValidateDynamicContent($('.addContactFrm'));
+                }
+            );
+
+            $('.newContact').on('click', function (evt) {
+                $('#agregarContactoModal').modal();
+
+                evt.preventDefault();
+            });
+
+            $(document).on('click', '.contactAddSave', function () {
+                var form = $('.addContactFrm');
+                var me = $(this);
+
+                if (form.valid()) {
+                    $('#agregarContactoModal').modal('hide');
+                    $.post(
+                        form.attr('action'),
+                        form.serialize(),
+                        function (data) {
+                            //$('.misContactos').html(data);
+                            fnUpdateContacts();
+                            fnClearForm('.addContactFrm', true);
+                            setTimeout(function () {
+
+                                if ($('#exitoso').val() == "True") {
+                                    alert('Contacto agregado correctamente');
+                                }
+                                else {
+                                    alert('Error al agregar el contacto');
+                                }
+
+                            }, 500); // 1/2 segundo para mostrar respuesta.
+                        }
+                    );
+                }
+            });
+
+            $(document).on('click', '.editContact', function (evt) {
+                evt.preventDefault();
+                var me = $(this);
+                $('.modalForm').html('');
+                $.get(
+                    me.data('url'),
+                    function (data) {
+                        $('.modalForm').html(data);
+                        $('#editarContactoModal').modal();
+                        fnValidateDynamicContent($('.editContactFrm'));
+                    }
+                );
+            });
+
+            $(document).on('click', '.deleteContact', function (evt) {
+                evt.preventDefault();
+                var me = $(this);
+
+                if (
+                    confirm('¿Esta seguro de eliminar este contacto?')) {
+                    $.post(
+                        me.attr('href'),
+                        function (data) {
+                            //$('.misContactos').html(data);
+                            fnUpdateContacts();
+                            setTimeout(function () {
+
+                                if ($('#exitoso').val() == "True") {
+                                    alert('Contacto eliminado correctamente');
+                                }
+                                else {
+                                    alert('Error al eliminar el contacto');
+                                    alert(data);
+                                }
+
+                            }, 500); // 1/2 segundo para mostrar respuesta.
+                        }
+                    );
+                }
+
+            });
+
+            $(document).on('click', '.contactEditSave', function () {
+                var form = $('.editContactFrm');
+                var me = $(this);
+
+                if (form.valid()) {
+                    $('#editarContactoModal').modal('hide');
+                    $.post(
+                        form.attr('action'),
+                        form.serialize(),
+                        function (data) {
+                            //$('.misContactos').html(data);
+                            fnUpdateContacts();
+                            setTimeout(function () {
+
+                                if ($('#exitoso').val() == "True") {
+                                    alert('Datos de contacto actualizados correctamente');
+                                }
+                                else {
+                                    alert('Error al actualizar los datos del contacto');
+                                }
+
+                            }, 500); // 1/2 segundo para mostrar respuesta.
+                        }
+                    );
+                }
+            });
+        });
+    </script>
+}
