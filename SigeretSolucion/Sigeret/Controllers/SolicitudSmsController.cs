@@ -32,25 +32,25 @@ namespace Sigeret.Controllers
         }
          */
         //
-     /*   // GET: /SolicitudSms/
+       // GET: /SolicitudSms/
         public ActionResult Index()
         {
             return View();
         }
         
         [HttpPost]
-   */
+   
         public ActionResult Index(string body, string From)
         {
             string opcion ="";
 
-            // get the session varible if it exists    
+             
             if (Session["opcion"] != null) { opcion =(String)Session["opcion"]; }
 
-            // increment it
+         
             opcion = opcion+body;
 
-            // save it
+            
             Session["opcion"] = opcion; 
 
             string sender = "2766011354";
@@ -71,9 +71,6 @@ namespace Sigeret.Controllers
                 //enviamos la solicitud al metodo ProcesarSolicitud
                 respuesta = ProcesarSolicitud(body, "5088863180");
 
-            }else if(body.Length>3 && body.Substring(0,3)=="de*"){
-
-                respuesta = getCodigoEquipos(body);
             }
             else
             {
@@ -82,62 +79,81 @@ namespace Sigeret.Controllers
                 {
                         
                     case "ayuda":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones\n5 Cancelar Solicitud";
+                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
+                        Session["opcion"] = "";
                         break;
 
                     case "":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones\n5 Cancelar Solicitud";
+                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
                         break;
 
                     case "menu":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones\n5 Cancelar Solicitud";
+                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
+                        Session["opcion"] = "";
                         break;
-
+                    
                     case "1":
-                        respuesta = "\nMenu Solicitud\n1 Formato Nueva Solicitud\n2 Formato Fecha\n3 Fomato Hora";
-                        break;
-                                            
-                    case "2":
-                        respuesta = "\nEquipos\nCE Codigos Equipos\nDE Descripcion Equipo";
+                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
                         break;
 
-                    case "3":
-                        respuesta = "\nNipSms \nCodigo utilizado para confirmar la solicitud\n Esta disponible via web o personalmente.\nEnvia NSMS para mas detalles";//Codigo para confirmar la solicitud que sera entregado al usuario
-                        //al crear su cuenta y luego cada vez q haga una solicitud cuando pase a entregar el equipo se le entregara este codigo personal
-                        break;
 
-                    case "4":
-                        respuesta = "En desarrollo";
-                        break;
-
-                    case "5":
-                        respuesta = "\nCancelar Solicitud\n C*codigoSolicitud\nEjemplo C*2301 ";
-                        break;
-
-                    case "ce":
-                        respuesta = getCodigoEquipos(null);//Funcion para devolver todos lo equipos disponibles por modelos
-                        break;
-
-                    case "de":
-                        respuesta = "\nDescripcion Equipo\nde*codigoEquipo para ver la descripcion\nEj: de*001";
-                        break;
-
-                    case "nsms":
-                        respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999";
-                        break;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     case "11":
-                        respuesta = "\nFormato Solicitud:\n *fecha*horaInicio*horaFin*NipSMS*IdSalon*CodigoEquipo1*cantidad*CodigoEquipo2*cantidad*";
+                        respuesta = "\nMenu Solicitud\n1 Formato Nueva Solicitud\n2 Formato Fecha\n3 Fomato Hora\n4 Cancelar Solicitud";
+                        break;
+                                            
+                    case "12":
+                        respuesta = "\nEquipos\n1 Codigos Equipos\n2 Descripcion Equipo";
                         break;
 
-                    case "12":
-                        respuesta = "\nFormato Fecha\nDia/Mes/año \nEjemplo 24/12/1999";
-                        break;
                     case "13":
+                        respuesta = "\nNipSms \nCodigo utilizado para confirmar la solicitud\n Esta disponible via web o personalmente.\n1 mas detalles";//Codigo para confirmar la solicitud que sera entregado al usuario
+                        //al crear su cuenta y luego cada vez q haga una solicitud cuando pase a entregar el equipo se le entregara este codigo personal
+                        
+                        break;
+
+                    case "14":
+                        respuesta = "\nEn desarrollo";
+                        break;
+
+                    case "121":
+                        respuesta ="\n"+ getCodigoEquipos(null);//Funcion para devolver todos lo equipos disponibles por modelos
+                        Session["opcion"] = "";
+                        break;
+
+                    case "122":
+                        respuesta = "\nDescripcion Equipo\nde*codigoEquipo para ver la descripcion\nEj: de*001";
+                        Session["opcion"] = "";
+                        break;
+
+                    case "131":
+                        respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999";
+                        Session["opcion"] = "";
+                        break;
+
+                    case "111":
+                        respuesta = "\nFormato Solicitud:\n *fecha*horaInicio*horaFin*NipSMS*IdSalon*CodigoEquipo1*cantidad*CodigoEquipo2*cantidad*";
+                        Session["opcion"] = "";
+                        break;
+
+                    case "112":
+                        respuesta = "\nFormato Fecha\nDia/Mes/año \nEjemplo 24/12/1999";
+                        Session["opcion"] = "";
+                        break;
+                    
+                    case "113":
                         respuesta = "\nFormato Hora\n24H Ejemplo \n07:00  \n20:00 \nhora fin mayor a la hora inicio";
+                        Session["opcion"] = "";
+                        break;
+
+                    case "114":
+                        respuesta = "\nCancelar Solicitud\n C*codigoSolicitud\nEjemplo C*2301 ";
+                        Session["opcion"] = "";
                         break;
                     default:
                         respuesta = "\nNo se Reconoce la Instruccion";
+                        Session["opcion"] = "";
                         break;
 
                 }
@@ -147,9 +163,9 @@ namespace Sigeret.Controllers
              var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
             return Content(sms.Sid);
-         //   ViewBag.resp = respuesta+"Counter="+opcion;
-           // ViewBag.leng = respuesta.Length;
-           // return View();
+        //   ViewBag.resp = respuesta+" Opcion="+opcion;
+       //    ViewBag.leng = respuesta.Length;
+         //  return View();
         }
 
 

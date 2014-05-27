@@ -20,15 +20,8 @@ namespace Sigeret.Controllers
 
         public ActionResult ReporteUsuarios()
         {
-            try
-            {
-                return View(db.UserProfiles.ToList());
-            }
-            catch (Exception e)
-            {
 
-                return RedirectToAction("ExeptionError","CustomErrorController", e);
-            }
+                return View(db.UserProfiles.ToList());                          
         }
 
         public ActionResult Detalles(int Id)
