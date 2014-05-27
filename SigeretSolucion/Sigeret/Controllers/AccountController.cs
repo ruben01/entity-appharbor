@@ -19,8 +19,9 @@ using SIGERET.CustomCode;
 
 namespace Sigeret.Controllers
 {
-    [Authorize]
+   // [Authorize]
     //[InitializeSimpleMembership]
+    [AllowAnonymous]
     public class AccountController : BaseController
     {
 
