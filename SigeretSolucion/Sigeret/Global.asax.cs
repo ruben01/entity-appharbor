@@ -29,7 +29,7 @@ namespace Sigeret
             AuthConfig.RegisterAuth();
             WebSecurityStart.Register();
 
-            Database.SetInitializer<SigeretContext>(new DropCreateDatabaseIfModelChanges<SigeretContext>());
+            
         }
 
         protected void Application_EndRequest()

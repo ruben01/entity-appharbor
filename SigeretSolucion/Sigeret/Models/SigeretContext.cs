@@ -8,7 +8,8 @@ namespace Sigeret.Models
     {
         static SigeretContext()
         {
-            Database.SetInitializer<SigeretContext>(null);
+           // Database.SetInitializer<SigeretContext>(null);
+            Database.SetInitializer<SigeretContext>(new DropCreateDatabaseIfModelChanges<SigeretContext>());
         }
 
         public SigeretContext()
