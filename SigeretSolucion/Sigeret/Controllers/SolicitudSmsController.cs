@@ -25,7 +25,7 @@ namespace Sigeret.Controllers
             {
                 cnn.Open();
                
-               string queryString = "SELECT * FROM Contacto";
+               string queryString = "SELECT * FROM dbo.Contacto";
                SqlCommand command = new SqlCommand(queryString, cnn);
                
              
