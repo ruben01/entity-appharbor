@@ -24,8 +24,35 @@ namespace Sigeret.Controllers
             try
             {
                 cnn.Open();
-               ViewBag.error="Connection Open ! ";
+               
+               string queryString = "SELECT * FROM  [dbo].[UserProfile]";
+               SqlCommand command = new SqlCommand(queryString, cnn);
+               
+             
+               SqlDataReader reader = command.ExecuteReader();
+               
+               try
+               {
+                   while (reader.Read())
+                   {
+
+                       ViewBag.error = reader;
+                   }
+               }
+               finally
+               {
+                   // Always call Close when done reading.
+                   reader.Close();
+               }
+
+
+
+
+
                 cnn.Close();
+
+
+
             }
             catch (Exception ex)
             {
