@@ -18,7 +18,7 @@ namespace Sigeret.Controllers
         {
             string connetionString = null;
             SqlConnection cnn ;
-            connetionString = "Data Source=68c7080b-6f16-4426-8740-a3380103fe1e.sqlserver.sequelizer.com;Initial Catalog=db68c7080b6f1644268740a3380103fe1e;User ID=wnopohjgnhykfkjt;Password=zm6vRN8NVNfnXuH6YSwtJcGUGWaoupff5iMScf4nG3X4khzkRbGCcdixMkW4NSsF;MultipleActiveResultSets=True";
+            connetionString = "Server=68c7080b-6f16-4426-8740-a3380103fe1e.sqlserver.sequelizer.com;Database=db68c7080b6f1644268740a3380103fe1e;User ID=wnopohjgnhykfkjt;Password=zm6vRN8NVNfnXuH6YSwtJcGUGWaoupff5iMScf4nG3X4khzkRbGCcdixMkW4NSsF;MultipleActiveResultSets=True";
             //Server=;Database=;User ID=;Password=;
             cnn = new SqlConnection(connetionString);
             try
