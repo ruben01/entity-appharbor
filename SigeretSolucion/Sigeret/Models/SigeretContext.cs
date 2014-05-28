@@ -13,7 +13,7 @@ namespace Sigeret.Models
         }
 
         public SigeretContext()
-            : base("Name=SigeretContext")
+            : base("Name=LocalSqlServer")
         {
         }
 
