@@ -2,6 +2,7 @@
 using Sigeret.Controllers;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -26,6 +27,8 @@ namespace Sigeret
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             WebSecurityStart.Register();
+
+            Database.SetInitializer<DbContext>(new DropCreateDatabaseIfModelChanges<DbContext>());
         }
 
         protected void Application_EndRequest()
