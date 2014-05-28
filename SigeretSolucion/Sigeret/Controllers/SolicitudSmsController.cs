@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Data.Objects;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,6 +14,27 @@ namespace Sigeret.Controllers
     [AllowAnonymous]
     public class SolicitudSmsController : BaseController
     {
+        public ActionResult prueba2()
+        {
+            string connetionString = null;
+            SqlConnection cnn ;
+            connetionString = "Data Source=68c7080b-6f16-4426-8740-a3380103fe1e.sqlserver.sequelizer.com;Initial Catalog=db68c7080b6f1644268740a3380103fe1e;User ID=wnopohjgnhykfkjt;Password=zm6vRN8NVNfnXuH6YSwtJcGUGWaoupff5iMScf4nG3X4khzkRbGCcdixMkW4NSsF;MultipleActiveResultSets=True";
+            //Server=;Database=;User ID=;Password=;
+            cnn = new SqlConnection(connetionString);
+            try
+            {
+                cnn.Open();
+               ViewBag.error="Connection Open ! ";
+                cnn.Close();
+            }
+            catch (Exception ex)
+            {
+             ViewBag.error="Can not open connection ! "+ex.InnerException;
+            }
+
+            return View();
+        }
+
         /*
         public ActionResult prueba(){        
 
