@@ -29,7 +29,7 @@ namespace Sigeret
             AuthConfig.RegisterAuth();
             WebSecurityStart.Register();
 
-//            Database.SetInitializer<SigeretContext>(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<SigeretContext>());
+            Database.SetInitializer<SigeretContext>(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<SigeretContext>());
         }
 
         protected void Application_EndRequest()
