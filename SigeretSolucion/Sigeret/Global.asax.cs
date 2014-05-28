@@ -1,9 +1,7 @@
 ﻿using Sigeret.App_Start;
 using Sigeret.Controllers;
-using Sigeret.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -28,8 +26,6 @@ namespace Sigeret
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             WebSecurityStart.Register();
-
-            Database.SetInitializer<SigeretContext>(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<SigeretContext>());
         }
 
         protected void Application_EndRequest()

@@ -26,7 +26,7 @@ namespace Sigeret.App_Start
             {
                 WebSecurity.InitializeDatabaseConnection
                     (
-                     "LocalSqlServer",
+                     "SigeretContext",
                      "UserProfile",
                      "UserId",
                      "username",

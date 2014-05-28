@@ -8,12 +8,11 @@ namespace Sigeret.Models
     {
         static SigeretContext()
         {
-           // Database.SetInitializer<SigeretContext>(null);
-            Database.SetInitializer<SigeretContext>(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<SigeretContext>());
+            Database.SetInitializer<SigeretContext>(null);
         }
 
         public SigeretContext()
-            : base("Name=LocalSqlServer")
+            : base("Name=SigeretContext")
         {
         }
 
