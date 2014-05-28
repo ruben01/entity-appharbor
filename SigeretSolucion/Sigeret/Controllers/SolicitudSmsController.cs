@@ -25,7 +25,7 @@ namespace Sigeret.Controllers
             {
                 cnn.Open();
                
-               string queryString = "SELECT * FROM  [dbo].[UserProfile]";
+               string queryString = "SELECT * FROM Contacto";
                SqlCommand command = new SqlCommand(queryString, cnn);
                
              
@@ -36,7 +36,6 @@ namespace Sigeret.Controllers
                    ViewBag.error = "no leyo";
                    while (reader.Read())
                    {
-
                        ViewBag.error = reader.VisibleFieldCount;
                    }
 
