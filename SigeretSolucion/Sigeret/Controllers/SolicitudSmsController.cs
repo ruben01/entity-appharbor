@@ -42,24 +42,18 @@ namespace Sigeret.Controllers
    
         public ActionResult Index(string body, string From)
         {
-            string opcion ="";
-
-             
+            string opcion ="";             
             if (Session["opcion"] != null) { opcion =(String)Session["opcion"]; }
 
          
-            opcion = opcion+body;
 
-            
-            Session["opcion"] = opcion; 
 
             string sender = "2766011354";
-            if (!string.IsNullOrEmpty(body))
-            {
-                body = body.ToLower();
-            }
+
+
             string solicitud = "";
             string respuesta;
+
             //si la longitud del mensaje enviado es mayor a 2 entonces procedemos a sacar una subcadena para verificar si es una solicitud
             if (body.Length > 2)
             {
@@ -72,8 +66,18 @@ namespace Sigeret.Controllers
                 respuesta = ProcesarSolicitud(body, "5088863180");
 
             }
+            else if (opcion == "de")
+            {
+                respuesta= getCodigoEquipos(body);
+                Session["opcion"] = "";
+
+            }
             else
             {
+                
+                opcion = opcion + body;
+                Session["opcion"] = opcion; 
+
 
                 switch (opcion)
                 {
@@ -114,7 +118,8 @@ namespace Sigeret.Controllers
                         break;
 
                     case "14":
-                        respuesta = "\nEn desarrollo";
+                        respuesta = "\n"+getSalones(null);
+                        Session["opcion"] = "";
                         break;
 
                     case "121":
@@ -123,8 +128,8 @@ namespace Sigeret.Controllers
                         break;
 
                     case "122":
-                        respuesta = "\nDescripcion Equipo\nde*codigoEquipo para ver la descripcion\nEj: de*001";
-                        Session["opcion"] = "";
+                        respuesta = "\nEnvie el Codigo Equipo: Ejmp:001";
+                        Session["opcion"] = "de";
                         break;
 
                     case "131":
@@ -152,20 +157,20 @@ namespace Sigeret.Controllers
                         Session["opcion"] = "";
                         break;
                     default:
-                        respuesta = "\nNo se Reconoce la Instruccion";
+                        respuesta = "\nNo se Reconoce la Instruccion\n 1 Menu Principal";
                         Session["opcion"] = "";
                         break;
 
                 }
             }
 
-             var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
-             var sms = twilio.SendSmsMessage(sender,From,respuesta);
+            // var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
+           //  var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
-            return Content(sms.Sid);
-        //   ViewBag.resp = respuesta+" Opcion="+opcion;
-       //    ViewBag.leng = respuesta.Length;
-         //  return View();
+         //   return Content(sms.Sid);
+           ViewBag.resp = respuesta+" Opcion="+opcion;
+           ViewBag.leng = respuesta.Length;
+           return View();
         }
 
 
@@ -404,7 +409,7 @@ namespace Sigeret.Controllers
                 }
                 else
                 {
-                    ce = ce.Substring(3, ce.Length - 3);
+                    
                     int codigoEquipo = Int32.Parse(ce);
                     respuesta = db.ModeloEquipoes.SingleOrDefault(e => e.Id == codigoEquipo).Descripcion;
 
@@ -417,6 +422,39 @@ namespace Sigeret.Controllers
             }
         }
 
+        public string getSalones(string cs)
+        {
+
+            try
+            {
+                string respuesta = null;
+                if (cs == null)
+                {
+                    respuesta = "\nCodigos Salones";
+
+                    foreach (var modelo in db.AulaEdificios)
+                    {
+
+                        respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
+                    }
+
+
+                    return respuesta;
+                }
+                else
+                {
+
+                    int codigoEquipo = Int32.Parse(cs);
+                    respuesta = db.ModeloEquipoes.SingleOrDefault(e => e.Id == codigoEquipo).Descripcion;
+
+                    return respuesta;
+                }
+            }
+            catch
+            {
+                return "Problema al procesar el equipo !verifique Formato instruccion!";
+            }
+        }
 
 
 
