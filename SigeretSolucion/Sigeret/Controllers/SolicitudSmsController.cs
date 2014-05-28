@@ -33,11 +33,13 @@ namespace Sigeret.Controllers
                
                try
                {
+                   ViewBag.error = "no leyo";
                    while (reader.Read())
                    {
 
-                       ViewBag.error = reader;
+                       ViewBag.error = reader.VisibleFieldCount;
                    }
+
                }
                finally
                {
