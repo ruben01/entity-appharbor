@@ -1,5 +1,6 @@
 ﻿using Sigeret.App_Start;
 using Sigeret.Controllers;
+using Sigeret.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -28,7 +29,7 @@ namespace Sigeret
             AuthConfig.RegisterAuth();
             WebSecurityStart.Register();
 
-            Database.SetInitializer<DbContext>(new DropCreateDatabaseIfModelChanges<DbContext>());
+            Database.SetInitializer<SigeretContext>(new DropCreateDatabaseIfModelChanges<SigeretContext>());
         }
 
         protected void Application_EndRequest()
