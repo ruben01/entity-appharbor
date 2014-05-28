@@ -40,6 +40,8 @@ namespace Sigeret.Controllers
                        ViewBag.error = reader.VisibleFieldCount;
                    }
 
+               }catch(Exception e){
+                   ViewBag.error = e.InnerException;
                }
                finally
                {
