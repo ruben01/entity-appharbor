@@ -9,7 +9,7 @@ namespace Sigeret.Models
         static SigeretContext()
         {
            // Database.SetInitializer<SigeretContext>(null);
-            Database.SetInitializer<SigeretContext>(new DropCreateDatabaseIfModelChanges<SigeretContext>());
+            Database.SetInitializer<SigeretContext>(new Devtalk.EF.CodeFirst.DontDropDbJustCreateTablesIfModelChanged<SigeretContext>());
         }
 
         public SigeretContext()
