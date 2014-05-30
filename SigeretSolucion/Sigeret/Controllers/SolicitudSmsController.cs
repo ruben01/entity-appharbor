@@ -14,57 +14,7 @@ namespace Sigeret.Controllers
     [AllowAnonymous]
     public class SolicitudSmsController : BaseController
     {
-        public ActionResult prueba2()
-        {
-            string connetionString = null;
-            SqlConnection cnn ;
-            connetionString = "Server=68c7080b-6f16-4426-8740-a3380103fe1e.sqlserver.sequelizer.com;Database=db68c7080b6f1644268740a3380103fe1e;User ID=wnopohjgnhykfkjt;Password=zm6vRN8NVNfnXuH6YSwtJcGUGWaoupff5iMScf4nG3X4khzkRbGCcdixMkW4NSsF;";
-            //Server=;Database=;User ID=;Password=;
-            cnn = new SqlConnection(connetionString);
-            try
-            {
-                cnn.Open();
-               
-               string queryString = "SELECT * FROM dbo.Contacto";
-               SqlCommand command = new SqlCommand(queryString, cnn);
-               
-             
-               SqlDataReader reader = command.ExecuteReader();
-               
-               try
-               {
-                   ViewBag.error = "no leyo";
-                   while (reader.Read())
-                   {
-                       ViewBag.error = reader.VisibleFieldCount;
-                   }
-
-               }catch(Exception e){
-                   ViewBag.error = e.InnerException;
-               }
-               finally
-               {
-                   // Always call Close when done reading.
-                   reader.Close();
-               }
-
-
-
-
-
-                cnn.Close();
-
-
-
-            }
-            catch (Exception ex)
-            {
-             ViewBag.error="Can not open connection ! "+ex.InnerException;
-            }
-
-            return View();
-        }
-
+        
         /*
         public ActionResult prueba(){        
 
@@ -94,17 +44,40 @@ namespace Sigeret.Controllers
    
         public ActionResult Index(string body, string From)
         {
-            string opcion ="";             
-            if (Session["opcion"] != null) { opcion =(String)Session["opcion"]; }
-
-         
-
-
+            string opcion ="";
             string sender = "2766011354";
-
-
             string solicitud = "";
             string respuesta;
+
+            if (body.ToLower() == "ayuda" || body.ToLower() == "c")
+            {                 
+                Session["opcion"] = "";
+                Session["spp"] = "";
+                Session["sppOpcion"] = "";
+            }
+            
+            if (Session["opcion"] != null) { opcion =(String)Session["opcion"]; }
+
+            if (Session["opcion"] != null)
+            {
+                if (opcion=="spp")
+                {
+                    string spp = (string)Session["spp"];
+
+                    //almacena cada valor de la solicitud paso a paso
+                     Session["spp"] = spp +"*"+ body; 
+                     opcion = (String)Session["sppOpcion"];
+
+                }
+                else if (opcion == "spp*")
+                {
+                    body ="*"+(string)Session["spp"]+body+"*";
+                    Session["opcion"] = "";
+                }
+                
+                
+            }
+
 
             //si la longitud del mensaje enviado es mayor a 2 entonces procedemos a sacar una subcadena para verificar si es una solicitud
             if (body.Length > 2)
@@ -118,6 +91,31 @@ namespace Sigeret.Controllers
                 respuesta = ProcesarSolicitud(body, "5088863180");
 
             }
+            else if (opcion == "aes")
+            {
+                respuesta = agregarEquipoSolicitud(body, "5088863180");
+                Session["opcion"] = "";
+                Session["spp"] = "";
+                Session["sppOpcion"] = "";
+            }
+            else if (opcion == "cs")
+            {
+                respuesta = cancelarSolicitud(body, "5088863180");
+                Session["opcion"] = "";
+
+            }
+            else if (opcion == "ees")
+            {
+                respuesta = eliminarEquipoSolicitud(body, "5088863180");
+                Session["opcion"] = "";
+
+            }
+            else if (opcion == "es")
+            {
+                respuesta = estatusSolicitud(body, "5088863180");
+                Session["opcion"] = "";
+
+            }
             else if (opcion == "de")
             {
                 respuesta= getCodigoEquipos(body);
@@ -126,37 +124,37 @@ namespace Sigeret.Controllers
             }
             else
             {
-                
-                opcion = opcion + body;
-                Session["opcion"] = opcion; 
-
+                if ((String)Session["opcion"] != "spp")
+                {
+                    opcion = opcion + body;
+                    Session["opcion"] = opcion;
+                }
 
                 switch (opcion)
                 {
-                        
+
                     case "ayuda":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
-                        Session["opcion"] = "";
+                        respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
                         break;
 
                     case "":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
+                        respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
                         break;
 
                     case "menu":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
+                        respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
                         Session["opcion"] = "";
                         break;
                     
                     case "1":
-                        respuesta = "\n1 Nueva Solicitud\n2 Equipos\n3 NipSMS\n4 Salones";
+                        respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
                         break;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     case "11":
-                        respuesta = "\nMenu Solicitud\n1 Formato Nueva Solicitud\n2 Formato Fecha\n3 Fomato Hora\n4 Cancelar Solicitud";
+                        respuesta = "\nMenu Solicitud\n1 Formatos Solicitud \n2 Agregar Equipos \n3 Eliminar Equipos \n4 Cancelar Solicitud";
                         break;
                                             
                     case "12":
@@ -169,9 +167,24 @@ namespace Sigeret.Controllers
                         
                         break;
 
+                    case "112":
+                        respuesta = "Digite el codigo de la solicitud, el equipo y la cantidad con el sgt fomato:\ncodigoSolicitud*codigoEquipo*Cantidad";
+                        Session["opcion"] = "aes";
+                        break;
+
+                    case "113":
+                        respuesta = "Ingrese el codigo de la solicitud,codigo equipo y cantidad. \nCon el formato codigoSolicitud*codigoEquipo*Cantidad ";
+                        Session["opcion"] = "ees";
+                        break;
+
                     case "14":
                         respuesta = "\n"+getSalones(null);
                         Session["opcion"] = "";
+                        break;
+
+                    case "15":
+                        respuesta = "\nIngrese el Codigo de la Solicitud";
+                        Session["opcion"] = "es";
                         break;
 
                     case "121":
@@ -188,29 +201,76 @@ namespace Sigeret.Controllers
                         respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999";
                         Session["opcion"] = "";
                         break;
-
+                        
                     case "111":
+                        respuesta = "\n1 Solicitud paso a paso \n2 Formato Solicitud un paso\n3 Formato Fecha\n4 Fomato Hora";                       
+                        break;
+
+                    case "1111":
+                        respuesta = "\nIngrese la fecha \nC para cancelar";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "11111";
+                        break;
+
+                    case "11111":
+                        respuesta = "\nIngrese la Hora inicio.\nEjemplo: 07:00 formato 24h \nC para cancelar";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "111111";
+                        break;
+
+                    case "111111":
+                        respuesta = "\nIngrese la Hora final.\nEjemplo: 09:00 formato 24h \nC para cancelar";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "1111111";
+                        break;
+
+                    case "1111111":
+                        respuesta = "\nIngrese el NipSms. \nCodigo utilizado para validar la solicitud \nEnvie ayuda para mas informacion";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "11111111";
+                        break;
+
+                    case "11111111":
+                        respuesta = "\nIngrese el codigo del Salon. \nEj:001 \nEnvie ayuda y luego seleccione la opcion salon para mas informacion";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "111111111";
+                        break;
+
+                    case "111111111":
+                        respuesta = "\nIngrese el codigo del Equipo.\nEj:001 \nEnvie ayuda y luego seleccione la opcion Equipo para mas informacion";
+                        Session["opcion"] = "spp";
+                        Session["sppOpcion"] = "1111111111";
+                        break;
+
+                    case "1111111111":
+                        respuesta = "\nIngrese la cantidad necesaria del Equipo. \nC para cancelar";
+                        Session["opcion"] = "spp*";
+                        Session["sppOpcion"] = "";
+                        break;
+
+                    case "1112":
                         respuesta = "\nFormato Solicitud:\n *fecha*horaInicio*horaFin*NipSMS*IdSalon*CodigoEquipo1*cantidad*CodigoEquipo2*cantidad*";
                         Session["opcion"] = "";
                         break;
 
-                    case "112":
+                    case "1113":
                         respuesta = "\nFormato Fecha\nDia/Mes/año \nEjemplo 24/12/1999";
                         Session["opcion"] = "";
                         break;
                     
-                    case "113":
+                    case "1114":
                         respuesta = "\nFormato Hora\n24H Ejemplo \n07:00  \n20:00 \nhora fin mayor a la hora inicio";
                         Session["opcion"] = "";
                         break;
 
                     case "114":
-                        respuesta = "\nCancelar Solicitud\n C*codigoSolicitud\nEjemplo C*2301 ";
-                        Session["opcion"] = "";
+                        respuesta = "\nCancelar Solicitud\nIngrese el codigo de la Solicitud \nEjemplo 001 ";
+                        Session["opcion"] = "cs";
                         break;
                     default:
                         respuesta = "\nNo se Reconoce la Instruccion\n 1 Menu Principal";
-                        Session["opcion"] = "";
+                        Session["opcion"] = null;
+                        Session["sppOpcion"] = null;
                         break;
 
                 }
@@ -225,7 +285,205 @@ namespace Sigeret.Controllers
            return View();
         }
 
+        private string estatusSolicitud(string body, string telefono)
+        {
+            int codigo = 0;
+            try
+            {
+                codigo = Int32.Parse(body);
+            }
+            catch
+            {
+                return "Error con el codigo verifique y vuelva a intentarlo";
+            }
 
+            if (db.Solicituds.SingleOrDefault(s => s.Id == codigo) != null)
+            {
+               if(db.Contactoes.SingleOrDefault(c => c.Descripcion == telefono)!=null){
+                   
+                   int idUsuario = db.Contactoes.SingleOrDefault(c => c.Descripcion == telefono).IdUserProfile;
+                  
+                   if (idUsuario != db.Solicituds.SingleOrDefault(s => s.Id == codigo).IdUserProfile)
+                   {
+                       return "Usted no tiene solicitudes con este codigo. \nGracias";
+                   }
+
+                   int idEstatus = db.Solicituds.SingleOrDefault(s => s.Id == codigo).IdEstatusSolicitud;
+
+                   return "Estatus Solicitud \n" + db.EstatusSolicituds.SingleOrDefault(e => e.Id == idEstatus).Estatus;
+               }
+               else
+               {
+                   return "Su numero telefonico No esta registrado. \nGracias";
+               }
+               
+            }
+            else
+            {
+                return "Error con el codigo verifique y vuelva a intentarlo";
+            }
+          
+        }
+
+        private string agregarEquipoSolicitud(string body, string telefono)
+        {
+            int indice1 = 0;
+            int indice2 = 0;
+            int contador = 0;
+            int idSolicitud = 0;
+            int idEquipo = 0;
+            int cantidad = 0;
+            List<Equipo>disponibles=new List<Equipo>();
+            Solicitud solicitud = new Solicitud();
+
+            for (int i = 0; i < body.Length; i++)
+            {
+                
+                if (body.ElementAt(i) == '*' && contador ==0)
+                {
+                    indice1 = i;
+                    contador++;
+                }
+                else if (contador == 1 && body.ElementAt(i) == '*')
+                {
+                    indice2 = i;
+                }
+            }
+            try
+            {
+                idSolicitud = Int32.Parse(body.Substring(0, indice1));
+                idEquipo = Int32.Parse(body.Substring(indice1 + 1, indice2 - indice1 - 1));
+                cantidad = Int32.Parse(body.Substring(indice2 + 1, body.Length - indice2 - 1));
+            }
+            catch
+            {
+                return "Ha ocurido un problema.\nVerifique el formato y vuelva a intentarlo";
+            }
+
+            if (db.Solicituds.SingleOrDefault(s => s.Id == idSolicitud) != null)
+            {
+                solicitud = db.Solicituds.SingleOrDefault(s => s.Id == idSolicitud);
+            }
+            else
+            {
+                return "Codigo Solicitud invalido. Vuelva a intentarlo.";
+            }
+            if (solicitud.IdEstatusSolicitud == 3 || solicitud.IdEstatusSolicitud == 2 && solicitud.Fecha>DateTime.Now)
+            {
+
+                disponibles = EquiposDisponibles(solicitud.Fecha.ToString(), solicitud.HoraInicio.ToString(), solicitud.HoraFin.ToString());
+
+                if (disponibles.Where(e => e.IdModelo == idEquipo).Count() == 0)
+                {
+                    return "Equipo no esta disponible.";
+                }
+                else if (disponibles.Where(e => e.IdModelo == idEquipo).Count() < cantidad)
+                {
+                    return "La cantidad seleccionada no esta disponible. \nIntente con una cantidad menor";
+                }
+
+                foreach (var item in disponibles)
+                {
+                    if (cantidad > 0 && item.IdModelo == idEquipo)
+                    {
+                        SolicitudEquipo nuevo = new SolicitudEquipo();
+                        nuevo.idEquipo = item.Id;
+                        nuevo.IdSolicitud = idSolicitud;
+                        solicitud.SolicitudEquipoes.Add(nuevo);
+                        cantidad--;
+                    }
+                }
+            }
+            else
+            {
+                return "La solicitud ya no puede ser editada";
+            }
+
+            db.SaveChanges();
+                return "Equipo agregado. gracias";
+        }
+
+        private string eliminarEquipoSolicitud(string body, string p)
+        {
+            int indice1 = 0;
+            int indice2 = 0;
+            int contador = 0;
+            int idSolicitud = 0;
+            int idEquipo = 0;
+            int cantidad = 0;
+            
+            Solicitud solicitud = new Solicitud();
+
+            for (int i = 0; i < body.Length; i++)
+            {
+
+                if (body.ElementAt(i) == '*' && contador == 0)
+                {
+                    indice1 = i;
+                    contador++;
+                }
+                else if (contador == 1 && body.ElementAt(i) == '*')
+                {
+                    indice2 = i;
+                }
+            }
+            try
+            {
+                idSolicitud = Int32.Parse(body.Substring(0, indice1));
+                idEquipo = Int32.Parse(body.Substring(indice1 + 1, indice2 - indice1 - 1));
+                cantidad = Int32.Parse(body.Substring(indice2 + 1, body.Length - indice2 - 1));
+            }
+            catch
+            {
+                return "Ha ocurido un problema.\nVerifique el formato y vuelva a intentarlo";
+            }
+
+            if (db.Solicituds.SingleOrDefault(s => s.Id == idSolicitud) != null)
+            {
+                solicitud = db.Solicituds.SingleOrDefault(s => s.Id == idSolicitud);
+            }
+            else
+            {
+                return "Codigo Solicitud invalido. Vuelva a intentarlo.";
+            }
+            if (solicitud.IdEstatusSolicitud == 3 || solicitud.IdEstatusSolicitud == 2 && solicitud.Fecha > DateTime.Now)
+            {
+                List<Equipo> equipos = new List<Equipo>();
+
+                foreach (var equipo in solicitud.SolicitudEquipoes)
+                {
+                    equipos.Add(db.Equipoes.SingleOrDefault(e => e.Id == equipo.idEquipo));
+                }
+
+                if (equipos.Where(e => e.IdModelo == idEquipo).Count() == 0)
+                {
+                    return "No existen equipos con ese codigo.";
+                }
+
+
+
+                foreach (var equipo in equipos)
+                {
+                    if (cantidad > 0 && equipo.IdModelo == idEquipo)
+                    {
+                        SolicitudEquipo nuevo = new SolicitudEquipo();
+                        nuevo = solicitud.SolicitudEquipoes.SingleOrDefault(e => e.idEquipo == equipo.Id);
+                       // solicitud.SolicitudEquipoes.Remove(nuevo);
+                        db.SolicitudEquipoes.Remove(nuevo);
+                        cantidad--;
+                    }
+                }
+
+
+            }
+            else
+            {
+                return "La solicitud ya no puede ser editada";
+            }
+            
+            db.SaveChanges();
+            return "Equipos eliminados. gracias";
+        }
 
 
 
@@ -508,7 +766,50 @@ namespace Sigeret.Controllers
             }
         }
 
+        public string cancelarSolicitud(string cs,string telefono)
+        {
+            int codigo;
+            int idContacto;
 
+            try{
+
+                  codigo = Int32.Parse(cs);                
+            }
+            catch
+            {
+                return "Codigo Solicitud no valido vuelva a intentarlo";
+            }
+
+            if (db.Solicituds.SingleOrDefault(s => s.Id == codigo) != null)
+            {
+               idContacto=db.Solicituds.SingleOrDefault(s => s.Id == codigo).IdUserProfile;
+            }
+            else
+            {
+                return "Codigo Solicitud no valido vuelva a intentarlo";
+            }
+
+            if (db.Contactoes.SingleOrDefault(c => c.Descripcion == telefono) != null)
+            {
+                if (idContacto != db.Contactoes.SingleOrDefault(c => c.Descripcion == telefono).IdUserProfile)
+                {
+                    return "Lo Sentimos usted no tiene Solicitud con ese Codigo.";
+                }
+                else
+                {
+                  
+                  db.Solicituds.SingleOrDefault(s=>s.Id== codigo).IdEstatusSolicitud=4;
+                  db.SaveChanges();
+                }
+            }
+            else
+            {
+                return "Lo sentimos. \nEste numero de telefono no pertenece a ningun usuario registrado.";
+            }           
+            
+
+            return "Solicitud cancelada. \nGracias.";
+        }
 
 
         //Consultando los equipos disponibles por modelos
@@ -531,7 +832,7 @@ namespace Sigeret.Controllers
 
             var query = db.Database.SqlQuery<int>("EXEC EquiposNoDisponibles {0},{1},{2}", fecha, horaInicio, horaFin);
 
-            //Agregando los equipos a la lista de equipos disponibles
+            //Eliminando los equipos no disponibles de la lista de equipos disponibles
 
             foreach (var item in query)
             {
@@ -539,21 +840,12 @@ namespace Sigeret.Controllers
                 EquiposDisponibles.Remove(EquiposDisponibles.SingleOrDefault(e => e.Id == item));
 
             }
-            
-
-
-
-
 
             return  EquiposDisponibles;
         }
 
 
-        public DateTime formatoFecha(DateTime fecha, int meses)
-        {
-
-           return fecha.AddMonths(meses);
-        }
+ 
 
     }
 }
