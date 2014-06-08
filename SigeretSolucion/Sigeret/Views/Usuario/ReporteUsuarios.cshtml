@@ -14,7 +14,7 @@
                 <legend>Usuarios registrados en la aplicaci&oacute;n</legend>
                 <div class="form-group col-lg-12">
                     <p class="">
-                        @Html.ActionLink("Nuevo", "Register", null, new { @class = "btn btn-primary  fr mb10" })
+                        @Html.ActionLink("Nuevo", "Register", "Account", null, new { @class = "btn btn-primary  fr mb10" })
                     </p>
                 </div>
                 <div class="form-group scroll form_table col-lg-12 pl0">
@@ -35,6 +35,9 @@
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.Cedula)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.NipSms)
                             </th>
                             <th>Opciones</th>
                         </tr>
@@ -59,16 +62,19 @@
                                         @Html.DisplayFor(modelItem => item.Cedula)
                                     </td>
                                     <td>
+                                        @Html.DisplayFor(modelItem => item.NipSms)
+                                    </td>
+                                    <td>
 
                                         @Html.ActionLink("Detalles", "Detalles", new { id = item.UserId })
 
-                                        @if (item.IdEstatusUsuario != 2)
+                                        @if (item.EstatusUsuario != 2)
                                         { 
                 
                                             @:|
                                             @Html.ActionLink("Suspender", "Suspender", new { id = item.UserId })
                                         }
-                                        else if (item.IdEstatusUsuario == 2)
+                                        else if (item.EstatusUsuario == 2)
                                         {
                                             @:|
                                             @Html.ActionLink("Habilitar", "Habilitar", new { id = item.UserId })

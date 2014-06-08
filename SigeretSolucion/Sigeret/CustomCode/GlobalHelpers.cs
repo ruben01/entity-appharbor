@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
 
-namespace SIGERET.CustomCode
+namespace Sigeret.CustomCode
 {
     public class GlobalHelpers
     {
@@ -263,6 +263,18 @@ namespace SIGERET.CustomCode
                            });
         }
 
+        public static String EnumToStr(this Enum e)
+        {
+            return e.ToString().Replace("_", " ");
+        }
+
+        public static String EnumInstanceToStr<TEnum>(this object value)  where TEnum : struct
+        {
+
+            return Enum.Parse(typeof(TEnum), value.ToString(), true)
+                .ToString().Replace("_", " ");
+        }
+
         /// <summary>
         /// Método extensión utilizado para crear un arreglo de objetos del tipo
         /// SelectListItem utilizado para construir instancias de objetos html 
@@ -317,6 +329,27 @@ namespace SIGERET.CustomCode
                                        Convert.ToInt32(field.GetRawConstantValue())
                                      : enumObj.ToString().Contains(field.Name)
                          };
+
+
+            return values;
+        }
+
+        public static IEnumerable<SelectListItem> EnumToList<TEnum>(this Type type, bool useIntegerValue, TEnum enumObj) where TEnum : struct
+        {
+            var values = from TEnum e in Enum.GetValues(typeof(TEnum))
+                         select
+                             new SelectListItem
+                             {
+                                 Value =
+                                     (useIntegerValue)
+                                         ? Enum.Format(type, Enum.Parse(type, e.ToString()), "d")
+                                         : e.ToString(),
+                                 Text = e.ToString().Replace("_", " "),
+                                 Selected = (enumObj.Equals(null)) ? false :
+                                     (useIntegerValue)
+                                         ? (Convert.ToInt32(e) & Convert.ToInt32(enumObj)) == Convert.ToInt32(e)
+                                         : enumObj.ToString().Contains(e.ToString())
+                             };
 
 
             return values;

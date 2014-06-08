@@ -1,4 +1,4 @@
-﻿@model Sigeret.Models.Equipo
+﻿@model ModeloEquipo
 
 @{
     ViewBag.Title = "Editar";
@@ -11,7 +11,7 @@
             <h2>Editar</h2>
         </hgroup>
         <div class="well">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "editForm" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true)
@@ -23,42 +23,37 @@
 
                     <div class="row">
                         <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.ModeloEquipo.Nombre)
-                            @Html.CTextBoxFor(model => model.ModeloEquipo.Nombre)
-                            @Html.CValidationMessageFor(model => model.ModeloEquipo.Nombre)
+                            @Html.CLabelFor(model => model.Nombre)
+                            @Html.CTextBoxFor(model => model.Nombre)
+                            @Html.CValidationMessageFor(model => model.Nombre)
                         </div>
 
                         <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.Serie)
-                            @Html.CTextBoxFor(model => model.Serie)
-                            @Html.CValidationMessageFor(model => model.Serie)
+                            @Html.CLabelFor(model => model.Marca)
+                            @Html.CDropDownListFor(model => model.Marca, null, String.Empty, new { @class = "chosen" })
+                            @Html.CValidationMessageFor(model => model.Marca)
                         </div>
 
                         <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.ModeloEquipo.Modelo)
-                            @Html.CTextBoxFor(model => model.ModeloEquipo.Modelo)
-                            @Html.CValidationMessageFor(model => model.ModeloEquipo.Modelo)
+                            @Html.CLabelFor(model => model.Modelo)
+                            @Html.CTextBoxFor(model => model.Modelo)
+                            @Html.CValidationMessageFor(model => model.Modelo)
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.ModeloEquipo.MarcaEquipo.Marca)
-                            @Html.CTextBoxFor(model => model.ModeloEquipo.MarcaEquipo.Marca)
-                            @Html.CValidationMessageFor(model => model.ModeloEquipo.MarcaEquipo.Marca)
+                        <div class="form-group col-lg-12">
+                            @Html.CLabelFor(model => model.Descripcion)
+                            @Html.CTextAreaFor(model => model.Descripcion)
+                            @Html.CValidationMessageFor(model => model.Descripcion)
                         </div>
-
-                        <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.ModeloEquipo.Descripcion)
-                            @Html.CTextBoxFor(model => model.ModeloEquipo.Descripcion)
-                            @Html.CValidationMessageFor(model => model.ModeloEquipo.Descripcion)
-                        </div>
-
-                        <div class="form-group col-lg-4">
-                            @Html.CLabelFor(model => model.IdEstatusEquipo)
-                            @Html.CTextBoxFor(model => model.IdEstatusEquipo)
-                            @Html.CValidationMessageFor(model => model.IdEstatusEquipo)
-                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Unidades registradas de este Equipo</legend>
+                    <div class="partialUnidades">
+                        @Html.Partial("PartialEquiposModelo", Model.Equipoes)
                     </div>
 
                     <div class="row form-group col-lg-12">
@@ -69,9 +64,87 @@
                 </fieldset>
             }
         </div>
+        @Html.Partial("PartialEquipoUnidadCrear", new Equipo() { IdModeloEquipo = Model.Id })
+        <div class="unidadEditarModal"></div>
     </div>
 </div>
 
+
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        function CreateSuccess(data) {
+            $('.partialUnidades').html(data.Object);
+            alert(data.Message);
+            $('#UnidadesModalCreate').modal('hide');
+        }
+
+        function CreateFailure(data) {
+            alert(data.ErrorMessage);
+        }
+
+        function EditSuccess(data) {
+            $('.partialUnidades').html(data.Object);
+            alert(data.Message);
+            $('#UnidadesModalEdit').modal('hide');
+        }
+
+        function EditFailure(data) {
+            alert(data.ErrorMessage);
+        }
+
+        $(document).ready(function () {
+
+            $('.addUnidadBtn').on('click', function () {
+                if ($('.addUnidadFrm').valid()) {
+                    $('.addUnidadFrm').submit();
+                }
+            });
+
+            $(document).on('click', '.deleteUnidad', function (evt) {
+                var me = $(this);
+                evt.preventDefault();
+                if(window.confirm('¿Esta seguro de eliminar esta unidad?')){
+                    $.post(
+                        me.attr('href'),
+                        { id: me.data('val-id') },
+                        function (data) {
+                            if (data.Success) {
+                                $('.partialUnidades').html(data.Object);
+                                alert(data.Message);
+                            }
+                            else {
+                                alert(data.ErrorMessage);
+                            }
+                        }
+                    );
+                }
+            });
+
+            $(document).on('click', '.editUnidad', function (evt) {
+                evt.preventDefault();
+                var me = $(this);
+                $.get(
+                    me.attr('href'),
+                    { id: me.data('val-id') },
+                    function (data) {
+                        if (data.Success) {
+                            $('.unidadEditarModal').html(data.Object);
+                            fnValidateDynamicContent($('.editUnidadFrm'));
+                            $('#UnidadesModalEdit').modal();
+                        }
+                        else {
+                            alert(data.ErrorMessage);
+                        }
+                    }
+                );
+            });
+
+            $(document).on('click', '.editUnidadBtn', function () {
+                if ($('.editUnidadFrm').valid()) {
+                    $('.editUnidadFrm').submit();
+                }
+            });
+        });
+    </script>
 }
