@@ -16,46 +16,31 @@ namespace Sigeret.Controllers
     public class SolicitudSmsController : BaseController
     {
 
-        /*
-        public ActionResult prueba(){        
-
-            return View();
-        }
-        [HttpPost]
-        public ActionResult prueba(string fecha,string horaInicio, string horaFin)
-        {
-            DateTime obj = new DateTime();
-            obj = DateTime.Parse(fecha);
-
-            fecha = obj.ToString("yyyy-MM-dd");
-
-            var query = db.Database.SqlQuery<int>("EXEC EquiposDisponibles {0},{1},{2}", fecha, horaInicio, horaFin).ToList();
-
-            return View();
-        }
-         */
         //
         // GET: /SolicitudSms/
-   /*     public ActionResult Index()
+   /*    public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-    */
-
+    
+        */
         public ActionResult Index(string body, string From)
         {
             string opcion = "";
             string sender = "2766011354";
             string solicitud = "";
             string respuesta;
+            string verMas;
+
 
             if (body.ToLower() == "ayuda" || body.ToLower() == "c")
             {
                 Session["opcion"] = "";
                 Session["spp"] = "";
                 Session["sppOpcion"] = "";
+                Session["verMas"] = "";
             }
 
             if (Session["opcion"] != null) { opcion = (String)Session["opcion"]; }
@@ -125,6 +110,15 @@ namespace Sigeret.Controllers
                 Session["opcion"] = "";
 
             }
+            else if (opcion == "141" && body=="1")
+            {
+                //Tomando el valor de la session verMas para mantener un conteo de las veces que el usuario
+                //ha solicitado ver mas y asi devolver los valores especificos que el usuario quiere ver y aun no ha visto
+                verMas = (String)Session["verMas"];
+                Session["verMas"] = (Int32.Parse(verMas) + 1)+"";
+                verMas=(Int32.Parse(verMas) + 1)+"";
+                respuesta = getSalones(null,verMas );
+            }
             else
             {
                 if ((String)Session["opcion"] != "spp")
@@ -138,15 +132,17 @@ namespace Sigeret.Controllers
 
                     case "ayuda":
                         respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
+                        Session["opcion"] = "1";
                         break;
 
                     case "":
                         respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
+                        Session["opcion"] = "1";
                         break;
 
                     case "menu":
                         respuesta = "\n1 Solicitud\n2 Equipos\n3 NipSMS\n4 Salones \n5 Estatus Solicitud";
-                        Session["opcion"] = "";
+                        Session["opcion"] = "1";
                         break;
 
                     case "1":
@@ -170,6 +166,25 @@ namespace Sigeret.Controllers
 
                         break;
 
+                    case "14":
+                        respuesta = "\n" + getSalones(null,null)+"\n1 Ver mas";
+                        break;
+
+                    case "141":
+                        respuesta = "\n" + getSalones(null, "1");
+                        Session["verMas"] = "1";
+                                                
+                        break;
+
+                    case "15":
+                        respuesta = "\nIngrese el Codigo de la Solicitud";
+                        Session["opcion"] = "es";
+                        break;
+
+                    case "111":
+                        respuesta = "\n1 Solicitud paso a paso \n2 Formato Solicitud un paso\n3 Formato Fecha\n4 Fomato Hora";
+                        break;
+
                     case "112":
                         respuesta = "Digite el codigo de la solicitud, el equipo y la cantidad con el sgt fomato:\ncodigoSolicitud*codigoEquipo*Cantidad";
                         Session["opcion"] = "aes";
@@ -180,14 +195,9 @@ namespace Sigeret.Controllers
                         Session["opcion"] = "ees";
                         break;
 
-                    case "14":
-                        respuesta = "\n" + getSalones(null);
-                        Session["opcion"] = "";
-                        break;
-
-                    case "15":
-                        respuesta = "\nIngrese el Codigo de la Solicitud";
-                        Session["opcion"] = "es";
+                    case "114":
+                        respuesta = "\nCancelar Solicitud\nIngrese el codigo de la Solicitud \nEjemplo 001 ";
+                        Session["opcion"] = "cs";
                         break;
 
                     case "121":
@@ -203,10 +213,6 @@ namespace Sigeret.Controllers
                     case "131":
                         respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999";
                         Session["opcion"] = "";
-                        break;
-
-                    case "111":
-                        respuesta = "\n1 Solicitud paso a paso \n2 Formato Solicitud un paso\n3 Formato Fecha\n4 Fomato Hora";
                         break;
 
                     case "1111":
@@ -266,10 +272,6 @@ namespace Sigeret.Controllers
                         Session["opcion"] = "";
                         break;
 
-                    case "114":
-                        respuesta = "\nCancelar Solicitud\nIngrese el codigo de la Solicitud \nEjemplo 001 ";
-                        Session["opcion"] = "cs";
-                        break;
                     default:
                         respuesta = "\nNo se Reconoce la Instruccion\n 1 Menu Principal";
                         Session["opcion"] = null;
@@ -283,9 +285,9 @@ namespace Sigeret.Controllers
              var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
                return Content(sms.Sid);
-         //   ViewBag.resp = respuesta + " Opcion=" + opcion;
-          //  ViewBag.leng = respuesta.Length;
-           // return View();
+        //    ViewBag.resp = respuesta + " Opcion=" + opcion;
+         //  ViewBag.leng = respuesta.Length;
+          // return View();
         }
 
         private string estatusSolicitud(string body, string telefono)
@@ -734,22 +736,77 @@ namespace Sigeret.Controllers
             }
         }
 
-        public string getSalones(string cs)
+        public string getSalones(string cs,string verMas)
         {
 
             try
             {
                 string respuesta = null;
+                var aulas = db.AulaEdificios;
+
                 if (cs == null)
                 {
                     respuesta = "\nCodigos Salones";
 
-                    foreach (var modelo in db.AulaEdificios)
+                    if (verMas != null)
                     {
+                        if(aulas.Count()> Int32.Parse(verMas+"0")-5)
+                        {
+                            int i = 0;
+                            foreach (var modelo in aulas)
+                            {
+                               
+                                if (i > Int32.Parse(verMas + "0")-5 && i <= Int32.Parse(verMas + "0")&& 10== Int32.Parse(verMas + "0"))
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
-                        respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
+                                }
+                                else if (i > Int32.Parse(verMas + "0") - 10 && i <= Int32.Parse(verMas + "0") - 5 && 10 != Int32.Parse(verMas + "0"))
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
+
+                                }
+                                i++;
+                            }
+                            respuesta = respuesta + "\n1 Ver Mas";
+                        }
+                        else
+                        {
+                            int i = 0;
+                            foreach (var modelo in aulas)
+                            {
+
+                                if (i > Int32.Parse(verMas + "0") -10)
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
+
+                                }
+                                i++;
+                            }
+                            respuesta = respuesta + "\nNO mas Salones!";
+                            Session["opcion"] = "";
+                        }
+
                     }
+                    else
+                    {
+                        int i = 0;
+                        foreach (var modelo in aulas)
+                        {
+                           
+                            if (i < 5) { 
 
+                                respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
+                                i++;
+                            }
+                        
+                            
+                        }
+                    }
+                    
+
+
+                    
 
                     return respuesta;
                 }
