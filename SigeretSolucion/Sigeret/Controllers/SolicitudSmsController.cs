@@ -131,8 +131,16 @@ namespace Sigeret.Controllers
             {
                 if ((String)Session["opcion"] != "spp")
                 {
-                    opcion = opcion + body;
-                    Session["opcion"] = opcion;
+                    if (body == "9")
+                    {
+                        opcion = body.Substring(0, opcion.Length - 1);
+                        Session["opcion"] = opcion;
+                    }
+                    else
+                    {
+                        opcion = opcion + body;
+                        Session["opcion"] = opcion;
+                    }
                 }
 
                 switch (opcion)
@@ -161,15 +169,15 @@ namespace Sigeret.Controllers
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     case "11":
-                        respuesta = "\nMenu Solicitud\n1 Formatos Solicitud \n2 Agregar Equipos \n3 Eliminar Equipos \n4 Cancelar Solicitud";
+                        respuesta = "\nMenu Solicitud\n1 Formatos Solicitud \n2 Agregar Equipos \n3 Eliminar Equipos \n4 Cancelar Solicitud\n9 Atras";
                         break;
 
                     case "12":
-                        respuesta = "\nEquipos\n1 Codigos Equipos\n2 Descripcion Equipo";
+                        respuesta = "\nEquipos\n1 Codigos Equipos\n2 Descripcion Equipo \n9 Atras";
                         break;
 
                     case "13":
-                        respuesta = "\nNipSms \nCodigo utilizado para confirmar la solicitud\n Esta disponible via web o personalmente.\n1 mas detalles";//Codigo para confirmar la solicitud que sera entregado al usuario
+                        respuesta = "\nNipSms \nCodigo utilizado para confirmar la solicitud\n Esta disponible via web o personalmente.\n1 mas detalles \n9 Atras";//Codigo para confirmar la solicitud que sera entregado al usuario
                         //al crear su cuenta y luego cada vez q haga una solicitud cuando pase a entregar el equipo se le entregara este codigo personal
 
                         break;
@@ -189,7 +197,7 @@ namespace Sigeret.Controllers
                         break;
 
                     case "111":
-                        respuesta = "\n1 Solicitud paso a paso \n2 Formato Solicitud un paso\n3 Formato Fecha\n4 Fomato Hora";
+                        respuesta = "\n1 Solicitud paso a paso \n2 Formato Solicitud un paso\n3 Formato Fecha\n4 Fomato Hora \n9 Atras";
                         break;
 
                     case "112":
@@ -218,12 +226,12 @@ namespace Sigeret.Controllers
                         break;
 
                     case "122":
-                        respuesta = "\nEnvie el Codigo Equipo: Ejmp:001";
+                        respuesta = "\nEnvie el Codigo Equipo: Ejmp:001 \n9 Atras";
                         Session["opcion"] = "de";
                         break;
 
                     case "131":
-                        respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999";
+                        respuesta = "\nNipSMS\n Codigo de 4 digitos generado al momento de crear su cuenta.\nDebe proporcionarlo para una solicitud SMS.\nEj. 9999 \n9 Atras";
                         Session["opcion"] = "";
                         break;
 
@@ -270,17 +278,17 @@ namespace Sigeret.Controllers
                         break;
 
                     case "1112":
-                        respuesta = "\nFormato Solicitud:\n *fecha*horaInicio*horaFin*NipSMS*IdSalon*CodigoEquipo1*cantidad*CodigoEquipo2*cantidad*";
+                        respuesta = "\nFormato Solicitud:\n *fecha*horaInicio*horaFin*NipSMS*IdSalon*CodigoEquipo1*cantidad*CodigoEquipo2*cantidad* \n9 Atras";
                         Session["opcion"] = "";
                         break;
 
                     case "1113":
-                        respuesta = "\nFormato Fecha\nDia/Mes/año \nEjemplo 24/12/1999";
+                        respuesta = "\nFormato Fecha\nDia/Mes/año \nEjemplo 24/12/1999 \n9 Atras";
                         Session["opcion"] = "";
                         break;
 
                     case "1114":
-                        respuesta = "\nFormato Hora\n24H Ejemplo \n07:00  \n20:00 \nhora fin mayor a la hora inicio";
+                        respuesta = "\nFormato Hora\n24H Ejemplo \n07:00  \n20:00 \nhora fin mayor a la hora inicio \n9 Atras";
                         Session["opcion"] = "";
                         break;
 
