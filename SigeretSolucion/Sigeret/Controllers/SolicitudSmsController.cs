@@ -756,12 +756,12 @@ namespace Sigeret.Controllers
                             foreach (var modelo in aulas)
                             {
                                
-                                if (i > Int32.Parse(verMas + "0")-7 && i <= Int32.Parse(verMas + "0")&& 10== Int32.Parse(verMas + "0"))
+                                if (i > Int32.Parse(verMas + "0")-5 && i <= Int32.Parse(verMas + "0")&& 10== Int32.Parse(verMas + "0"))
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
                                 }
-                                else if (i > Int32.Parse(verMas + "0") - 12 && i <= Int32.Parse(verMas + "0") - 7 && 10 != Int32.Parse(verMas + "0"))
+                                else if (i > Int32.Parse(verMas + "0") - 10 && i <= Int32.Parse(verMas + "0") - 7 && 10 != Int32.Parse(verMas + "0"))
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
@@ -776,7 +776,7 @@ namespace Sigeret.Controllers
                             foreach (var modelo in aulas)
                             {
 
-                                if (i > Int32.Parse(verMas + "0") -12)
+                                if (i > Int32.Parse(verMas + "0") -10)
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
