@@ -106,7 +106,7 @@ namespace Sigeret.Controllers
             }
             else if (opcion == "de")
             {
-                respuesta = getCodigoEquipos(body);
+                respuesta = getCodigoEquipos(body,null);
                 Session["opcion"] = "";
 
             }
@@ -201,7 +201,7 @@ namespace Sigeret.Controllers
                         break;
 
                     case "121":
-                        respuesta = "\n" + getCodigoEquipos(null);//Funcion para devolver todos lo equipos disponibles por modelos
+                        respuesta = "\n" + getCodigoEquipos(null,null);//Funcion para devolver todos lo equipos disponibles por modelos
                         Session["opcion"] = "";
                         break;
 
@@ -702,21 +702,85 @@ namespace Sigeret.Controllers
         }
 
 
-        public string getCodigoEquipos(string ce)
+        public string getCodigoEquipos(string ce, string verMas)
         {
 
             try
             {
                 string respuesta = null;
+                var codigosEquipos = db.ModeloEquipoes;
+
                 if (ce == null)
                 {
                     respuesta = "\nCodigos Equipos";
 
-                    foreach (var modelo in db.ModeloEquipoes)
+                    if (verMas != null)
                     {
+                        if (codigosEquipos.Count() > Int32.Parse(verMas + "0") - 5)
+                        {
+                            int i = 0;
+                            foreach (var modelo in codigosEquipos)
+                            {
 
-                        respuesta = respuesta + "\n" + modelo.Nombre + "=" + modelo.Id;
+                                if (i > Int32.Parse(verMas + "0") - 5 && i <= Int32.Parse(verMas + "0") && 10 == Int32.Parse(verMas + "0"))
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Nombre + "=" + modelo.Id;
+
+                                }
+                                else if (i > Int32.Parse(verMas + "0") - 10 && i <= Int32.Parse(verMas + "0") - 7 && 10 != Int32.Parse(verMas + "0"))
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Nombre + "=" + modelo.Id;
+
+                                }
+                                i++;
+                            }
+                            if (i == codigosEquipos.Count())
+                            {
+                                respuesta = respuesta + "\nNO mas Equipos!";
+                                Session["opcion"] = "";
+                            }
+                            else
+                            {
+                                respuesta = respuesta + "\n1 Ver Mas";
+                            }
+                        }
+                        else
+                        {
+                            int i = 0;
+                            foreach (var modelo in codigosEquipos)
+                            {
+
+                                if (i > Int32.Parse(verMas + "0") - 10)
+                                {
+                                    respuesta = respuesta + "\n" + modelo.Nombre + "=" + modelo.Id;
+
+                                }
+                                i++;
+                            }
+                            respuesta = respuesta + "\nNO mas Equipos!";
+                            Session["opcion"] = "";
+                        }
+
                     }
+                    else
+                    {
+                        int i = 0;
+                        foreach (var modelo in codigosEquipos)
+                        {
+
+                            if (i < 5)
+                            {
+
+                                respuesta = respuesta + "\n" + modelo.Nombre + "=" + modelo.Id;
+                                i++;
+                            }
+
+
+                        }
+                    }
+
+
+
 
 
                     return respuesta;
@@ -724,8 +788,8 @@ namespace Sigeret.Controllers
                 else
                 {
 
-                    int codigoEquipo = Int32.Parse(ce);
-                    respuesta = db.ModeloEquipoes.SingleOrDefault(e => e.Id == codigoEquipo).Descripcion;
+                    int codigoSalon = Int32.Parse(ce);
+                    respuesta = db.AulaEdificios.SingleOrDefault(e => e.Id == codigoSalon).Aula;
 
                     return respuesta;
                 }
