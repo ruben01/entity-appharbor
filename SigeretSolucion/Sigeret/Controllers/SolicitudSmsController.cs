@@ -18,14 +18,14 @@ namespace Sigeret.Controllers
 
         //
         // GET: /SolicitudSms/
-   /*    public ActionResult Index()
+       public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
     
-        */
+
         public ActionResult Index(string body, string From)
         {
             string opcion = "";
@@ -281,13 +281,13 @@ namespace Sigeret.Controllers
                 }
             }
 
-             var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
-             var sms = twilio.SendSmsMessage(sender,From,respuesta);
+        //     var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
+        //     var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
-               return Content(sms.Sid);
-        //    ViewBag.resp = respuesta + " Opcion=" + opcion;
-         //  ViewBag.leng = respuesta.Length;
-          // return View();
+         //      return Content(sms.Sid);
+            ViewBag.resp = respuesta + " Opcion=" + opcion;
+           ViewBag.leng = respuesta.Length;
+           return View();
         }
 
         private string estatusSolicitud(string body, string telefono)
@@ -756,12 +756,12 @@ namespace Sigeret.Controllers
                             foreach (var modelo in aulas)
                             {
                                
-                                if (i > Int32.Parse(verMas + "0")-5 && i <= Int32.Parse(verMas + "0")&& 10== Int32.Parse(verMas + "0"))
+                                if (i > Int32.Parse(verMas + "0")-7 && i <= Int32.Parse(verMas + "0")&& 10== Int32.Parse(verMas + "0"))
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
                                 }
-                                else if (i > Int32.Parse(verMas + "0") - 10 && i <= Int32.Parse(verMas + "0") - 5 && 10 != Int32.Parse(verMas + "0"))
+                                else if (i > Int32.Parse(verMas + "0") - 12 && i <= Int32.Parse(verMas + "0") - 7 && 10 != Int32.Parse(verMas + "0"))
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
@@ -776,7 +776,7 @@ namespace Sigeret.Controllers
                             foreach (var modelo in aulas)
                             {
 
-                                if (i > Int32.Parse(verMas + "0") -10)
+                                if (i > Int32.Parse(verMas + "0") -12)
                                 {
                                     respuesta = respuesta + "\n" + modelo.Aula + "=" + modelo.Id;
 
