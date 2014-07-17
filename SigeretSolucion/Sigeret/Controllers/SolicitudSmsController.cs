@@ -768,7 +768,15 @@ namespace Sigeret.Controllers
                                 }
                                 i++;
                             }
-                            respuesta = respuesta + "\n1 Ver Mas";
+                            if (i == aulas.Count())
+                            {
+                                respuesta = respuesta + "\nNO mas Salones!";
+                                Session["opcion"] = "";
+                            }
+                            else
+                            {
+                                respuesta = respuesta + "\n1 Ver Mas";
+                            }
                         }
                         else
                         {
