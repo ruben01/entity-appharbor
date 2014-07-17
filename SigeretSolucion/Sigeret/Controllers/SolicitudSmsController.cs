@@ -18,13 +18,12 @@ namespace Sigeret.Controllers
 
         //
         // GET: /SolicitudSms/
-  /*     public ActionResult Index()
+      public ActionResult Index()
         {
             return View();
         }
 
-        [HttpPost]
-*/    
+        [HttpPost]    
 
         public ActionResult Index(string body, string From)
         {
@@ -119,7 +118,7 @@ namespace Sigeret.Controllers
                 verMas=(Int32.Parse(verMas) + 1)+"";
                 respuesta = getSalones(null,verMas );
             }
-            else if (opcion == "121" && body == "1")
+            else if (opcion == "1211" && body == "1")
             {
                 //Tomando el valor de la session verMas para mantener un conteo de las veces que el usuario
                 //ha solicitado ver mas y asi devolver los valores especificos que el usuario quiere ver y aun no ha visto
@@ -209,7 +208,8 @@ namespace Sigeret.Controllers
                         break;
 
                     case "121":
-                        respuesta = "\n" + getCodigoEquipos(null,null)+"\n1 Ver mas";//Funcion para devolver todos lo equipos disponibles por modelos
+                        //Funcion para devolver todos lo equipos disponibles por modelos
+                        respuesta = "\n" + getCodigoEquipos(null,null)+"\n1 Ver mas";
                         break;
 
                     case "1211":
@@ -293,13 +293,13 @@ namespace Sigeret.Controllers
                 }
             }
 
-             var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
-             var sms = twilio.SendSmsMessage(sender,From,respuesta);
+        //     var twilio = new TwilioRestClient("AC7329769855ac2319f51129e29352294c","30b5abfcedeec6ec14586780e880fc88");
+          //   var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
-             return Content(sms.Sid);
-        //    ViewBag.resp = respuesta + " Opcion=" + opcion;
-        //   ViewBag.leng = respuesta.Length;
-        //   return View();
+           //  return Content(sms.Sid);
+           ViewBag.resp = respuesta + " Opcion=" + opcion;
+           ViewBag.leng = respuesta.Length;
+           return View();
         }
 
         private string estatusSolicitud(string body, string telefono)
