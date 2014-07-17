@@ -76,31 +76,31 @@ namespace Sigeret.Controllers
             if (solicitud == "**")
             {
                 //enviamos la solicitud al metodo ProcesarSolicitud
-                respuesta = ProcesarSolicitud(body, "5088863180");
+                respuesta = ProcesarSolicitud(body, From);
 
             }
             else if (opcion == "aes")
             {
-                respuesta = agregarEquipoSolicitud(body, "5088863180");
+                respuesta = agregarEquipoSolicitud(body, From);
                 Session["opcion"] = "";
                 Session["spp"] = "";
                 Session["sppOpcion"] = "";
             }
             else if (opcion == "cs")
             {
-                respuesta = cancelarSolicitud(body, "5088863180");
+                respuesta = cancelarSolicitud(body, From);
                 Session["opcion"] = "";
 
             }
             else if (opcion == "ees")
             {
-                respuesta = eliminarEquipoSolicitud(body, "5088863180");
+                respuesta = eliminarEquipoSolicitud(body, From);
                 Session["opcion"] = "";
 
             }
             else if (opcion == "es")
             {
-                respuesta = estatusSolicitud(body, "5088863180");
+                respuesta = estatusSolicitud(body, From);
                 Session["opcion"] = "";
 
             }
@@ -118,6 +118,15 @@ namespace Sigeret.Controllers
                 Session["verMas"] = (Int32.Parse(verMas) + 1)+"";
                 verMas=(Int32.Parse(verMas) + 1)+"";
                 respuesta = getSalones(null,verMas );
+            }
+            else if (opcion == "121" && body == "1")
+            {
+                //Tomando el valor de la session verMas para mantener un conteo de las veces que el usuario
+                //ha solicitado ver mas y asi devolver los valores especificos que el usuario quiere ver y aun no ha visto
+                verMas = (String)Session["verMas"];
+                Session["verMas"] = (Int32.Parse(verMas) + 1) + "";
+                verMas = (Int32.Parse(verMas) + 1) + "";
+                respuesta = getCodigoEquipos(null, verMas);
             }
             else
             {
@@ -172,8 +181,7 @@ namespace Sigeret.Controllers
 
                     case "141":
                         respuesta = "\n" + getSalones(null, "1");
-                        Session["verMas"] = "1";
-                                                
+                        Session["verMas"] = "1";                                                
                         break;
 
                     case "15":
@@ -201,8 +209,12 @@ namespace Sigeret.Controllers
                         break;
 
                     case "121":
-                        respuesta = "\n" + getCodigoEquipos(null,null);//Funcion para devolver todos lo equipos disponibles por modelos
-                        Session["opcion"] = "";
+                        respuesta = "\n" + getCodigoEquipos(null,null)+"\n1 Ver mas";//Funcion para devolver todos lo equipos disponibles por modelos
+                        break;
+
+                    case "1211":
+                        respuesta = "\n" + getCodigoEquipos(null, "1");
+                        Session["verMas"] = "1";
                         break;
 
                     case "122":
