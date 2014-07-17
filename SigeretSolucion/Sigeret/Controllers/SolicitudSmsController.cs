@@ -24,7 +24,7 @@ namespace Sigeret.Controllers
         }
 
         [HttpPost]    
-        */
+     */   
         public ActionResult Index(string body, string From)
         {
             string opcion = "";
@@ -133,7 +133,7 @@ namespace Sigeret.Controllers
                 {
                     if (body == "9")
                     {
-                        opcion = body.Substring(0, opcion.Length - 1);
+                        opcion = opcion.Substring(0, opcion.Length - 1);
                         Session["opcion"] = opcion;
                     }
                     else
@@ -305,9 +305,9 @@ namespace Sigeret.Controllers
              var sms = twilio.SendSmsMessage(sender,From,respuesta);
 
              return Content(sms.Sid);
-          // ViewBag.resp = respuesta + " Opcion=" + opcion;
+         // ViewBag.resp = respuesta + " Opcion=" + opcion;
           // ViewBag.leng = respuesta.Length;
-        //   return View();
+           //return View();
         }
 
         private string estatusSolicitud(string body, string telefono)
