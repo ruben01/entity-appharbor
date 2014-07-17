@@ -308,6 +308,8 @@ namespace Sigeret.Controllers
          // ViewBag.resp = respuesta + " Opcion=" + opcion;
           // ViewBag.leng = respuesta.Length;
            //return View();
+
+
         }
 
         private string estatusSolicitud(string body, string telefono)
